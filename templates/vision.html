@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Vision — AI Assistant Platform{% endblock %}
+{% block page_title %}Vision{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Upload an image</div>
+  <input type="file" id="vision-file" accept="image/*" />
+  <div style="height:10px; display:flex; gap:10px;">
+    <button class="btn" onclick="runVision('ocr')">Extract text (OCR)</button>
+    <button class="btn" onclick="runVision('caption')">Describe image</button>
+    <button class="btn" onclick="runVision('receipt')">Analyze receipt</button>
+  </div>
+</div>
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Result</div>
+  <div id="vision-result" class="muted" style="white-space:pre-wrap;">Result will appear here.</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function runVision(mode) {
+  const file = document.getElementById('vision-file').files[0];
+  if (!file) return alert('Choose an image first.');
+  const fd = new FormData();
+  fd.append('file', file);
+  const box = document.getElementById('vision-result');
+  box.textContent = 'Analyzing...';
+  try {
+    const data = await API.post(`/api/vision/${mode}`, fd);
+    box.textContent = JSON.stringify(data, null, 2);
+  } catch (e) {
+    box.textContent = e.message;
+  }
+}
+</script>
+{% endblock %}

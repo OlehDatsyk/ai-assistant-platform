@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Documents — AI Assistant Platform{% endblock %}
+{% block page_title %}Documents{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Upload a document</div>
+  <input type="file" id="file-input" accept=".pdf,.txt,.md" />
+  <div style="height:10px;"></div>
+  <button class="btn btn-primary" onclick="upload()">Upload &amp; index</button>
+  <p class="muted" style="font-size:12px; margin-top:8px;">PDF, TXT, or Markdown. Files are chunked and embedded for semantic search automatically.</p>
+</div>
+
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Library</div>
+  <table id="doc-table">
+    <thead><tr><th>Filename</th><th>Type</th><th>Size</th><th>Status</th><th></th></tr></thead>
+    <tbody id="doc-rows"></tbody>
+  </table>
+</div>
+
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Ask your documents</div>
+  <input id="rag-query" placeholder="What does the document say about...?" />
+  <div style="height:10px;"></div>
+  <button class="btn" onclick="queryDocs()">Search</button>
+  <div id="rag-results" style="margin-top:14px;"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadDocs() {
+  const docs = await API.get('/api/documents');
+  const rows = document.getElementById('doc-rows');
+  rows.innerHTML = docs.map(d => `
+    <tr>
+      <td>${d.filename}</td><td>${d.file_type}</td><td>${(d.size_bytes/1024).toFixed(1)} KB</td>
+      <td><span class="badge ${d.status === 'ready' ? 'ok' : 'off'}">${d.status}</span></td>
+      <td><a href="#" style="color:var(--red);" onclick="delDoc('${d.id}'); return false;">delete</a></td>
+    </tr>`).join('') || '<tr><td colspan="5" class="muted">No documents yet.</td></tr>';
+}
+async function upload() {
+  const file = document.getElementById('file-input').files[0];
+  if (!file) return alert('Choose a file first.');
+  const fd = new FormData();
+  fd.append('file', file);
+  await API.post('/api/documents/upload', fd);
+  await loadDocs();
+}
+async function delDoc(id) { await API.del(`/api/documents/${id}`); await loadDocs(); }
+async function queryDocs() {
+  const q = document.getElementById('rag-query').value;
+  const data = await API.post('/api/documents/query', { query: q, top_k: 5 });
+  const box = document.getElementById('rag-results');
+  box.innerHTML = data.results.map(r => `
+    <div class="card" style="margin-bottom:8px;">
+      <div class="muted" style="font-size:12px;">score ${r.score.toFixed(3)} · doc ${r.document_id.slice(0,8)}</div>
+      <div style="margin-top:6px; font-size:13.5px;">${r.content}</div>
+    </div>`).join('') || '<div class="muted">No results.</div>';
+}
+loadDocs();
+</script>
+{% endblock %}

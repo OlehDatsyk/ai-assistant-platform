@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Chat — AI Assistant Platform{% endblock %}
+{% block page_title %}Chat{% endblock %}
+{% block content_style %}padding:0;{% endblock %}
+{% block topbar_right %}
+<div class="model-switch" id="model-switch">
+  <button data-model="openai" class="active"><span class="led"></span>GPT</button>
+  <button data-model="anthropic"><span class="led"></span>Claude</button>
+  <button data-model="gemini"><span class="led"></span>Gemini</button>
+</div>
+{% endblock %}
+{% block content %}
+<div class="chat-layout">
+  <div class="conv-list" id="conv-list">
+    <button class="btn" style="width:100%; margin-bottom:10px;" onclick="newConversation()">+ New chat</button>
+    <div id="conv-items"></div>
+  </div>
+  <div class="chat-main">
+    <div class="chat-messages" id="chat-messages">
+      <div class="empty-state">Select or start a conversation to begin.</div>
+    </div>
+    <div style="padding: 0 20px;">
+      <div class="toggle-row">
+        <div class="toggle-chip" id="toggle-rag" onclick="toggleFlag('rag')">Use documents (RAG)</div>
+        <div class="toggle-chip" id="toggle-web" onclick="toggleFlag('web')">Web search</div>
+      </div>
+    </div>
+    <div class="chat-input-bar">
+      <textarea id="chat-input" placeholder="Message the assistant..." onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMessage();}"></textarea>
+      <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+let currentConversationId = null;
+let currentModel = 'openai';
+let flags = { rag: false, web: false };
+
+document.querySelectorAll('#model-switch button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#model-switch button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentModel = btn.dataset.model;
+  });
+});
+
+function toggleFlag(name) {
+  flags[name] = !flags[name];
+  document.getElementById(`toggle-${name}`).classList.toggle('active', flags[name]);
+}
+
+async function loadConversations() {
+  const convs = await API.get('/api/chat/conversations');
+  const container = document.getElementById('conv-items');
+  container.innerHTML = '';
+  convs.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'conv-item' + (c.id === currentConversationId ? ' active' : '');
+    div.textContent = (c.is_pinned ? '📌 ' : '') + c.title;
+    div.onclick = () => openConversation(c.id);
+    container.appendChild(div);
+  });
+}
+
+async function newConversation() {
+  const conv = await API.post('/api/chat/conversations', { title: 'New Conversation', model_provider: currentModel });
+  await loadConversations();
+  openConversation(conv.id);
+}
+
+async function openConversation(id) {
+  currentConversationId = id;
+  await loadConversations();
+  const messages = await API.get(`/api/chat/conversations/${id}/messages`);
+  const box = document.getElementById('chat-messages');
+  box.innerHTML = '';
+  if (messages.length === 0) {
+    box.innerHTML = '<div class="empty-state">No messages yet — say hello!</div>';
+  }
+  messages.forEach(m => appendMessage(m.role, m.content));
+}
+
+function appendMessage(role, content) {
+  const box = document.getElementById('chat-messages');
+  if (box.querySelector('.empty-state')) box.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.textContent = content;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return div;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  if (!currentConversationId) await newConversation();
+
+  appendMessage('user', text);
+  input.value = '';
+  const assistantDiv = appendMessage('assistant', '');
+
+  const resp = await fetch(`/api/chat/conversations/${currentConversationId}/stream`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${API.token()}` },
+    body: JSON.stringify({
+      content: text,
+      model_provider: currentModel,
+      use_rag: flags.rag,
+      use_web_search: flags.web,
+    }),
+  });
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n\n');
+    buffer = lines.pop();
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      const chunk = line.slice(6);
+      if (chunk === '[DONE]') continue;
+      assistantDiv.textContent += chunk;
+      document.getElementById('chat-messages').scrollTop = 1e9;
+    }
+  }
+}
+
+loadConversations();
+</script>
+{% endblock %}

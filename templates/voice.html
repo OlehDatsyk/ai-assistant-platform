@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Voice — AI Assistant Platform{% endblock %}
+{% block page_title %}Voice{% endblock %}
+{% block content %}
+<div class="grid grid-2">
+  <div class="card">
+    <div class="section-title" style="font-size:16px;">Speech to text</div>
+    <button class="btn" id="record-btn" onclick="toggleRecording()">● Start recording</button>
+    <div id="record-status" class="muted" style="margin-top:10px; font-size:13px;"></div>
+    <div id="transcript" style="margin-top:12px; white-space:pre-wrap; font-size:14px;"></div>
+  </div>
+  <div class="card">
+    <div class="section-title" style="font-size:16px;">Text to speech</div>
+    <textarea id="tts-text" rows="4" placeholder="Type something for the assistant to say..."></textarea>
+    <div style="height:10px;"></div>
+    <select id="tts-voice" style="max-width:200px;">
+      <option>alloy</option><option>echo</option><option>fable</option><option>onyx</option><option>nova</option><option>shimmer</option>
+    </select>
+    <div style="height:10px;"></div>
+    <button class="btn btn-primary" onclick="speak()">Generate speech</button>
+    <audio id="tts-audio" controls style="width:100%; margin-top:12px; display:none;"></audio>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+let mediaRecorder, chunks = [];
+async function toggleRecording() {
+  const btn = document.getElementById('record-btn');
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    btn.textContent = '● Start recording';
+    return;
+  }
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  mediaRecorder = new MediaRecorder(stream);
+  chunks = [];
+  mediaRecorder.ondataavailable = e => chunks.push(e.data);
+  mediaRecorder.onstop = async () => {
+    document.getElementById('record-status').textContent = 'Transcribing...';
+    const blob = new Blob(chunks, { type: 'audio/webm' });
+    const fd = new FormData();
+    fd.append('file', blob, 'audio.webm');
+    try {
+      const data = await API.post('/api/voice/transcribe', fd);
+      document.getElementById('transcript').textContent = data.text;
+      document.getElementById('record-status').textContent = 'Done.';
+    } catch (e) {
+      document.getElementById('record-status').textContent = e.message;
+    }
+  };
+  mediaRecorder.start();
+  btn.textContent = '■ Stop recording';
+  document.getElementById('record-status').textContent = 'Recording...';
+}
+async function speak() {
+  const text = document.getElementById('tts-text').value;
+  const voice = document.getElementById('tts-voice').value;
+  const resp = await API.request(`/api/voice/speak?text=${encodeURIComponent(text)}&voice=${voice}`, { method: 'POST' });
+  const blob = await resp.blob();
+  const audio = document.getElementById('tts-audio');
+  audio.src = URL.createObjectURL(blob);
+  audio.style.display = 'block';
+  audio.play();
+}
+</script>
+{% endblock %}

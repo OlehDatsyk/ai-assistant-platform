@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Sign in — AI Assistant Platform{% endblock %}
+{% block login_body %}
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center;">
+  <div class="card" style="width: 360px;">
+    <div class="brand" style="padding:0 0 18px 0;"><span class="dot"></span> AI Assistant Platform</div>
+    <div id="form-login">
+      <label>Email</label>
+      <input id="login-email" type="email" placeholder="you@example.com" />
+      <div style="height:10px;"></div>
+      <label>Password</label>
+      <input id="login-password" type="password" placeholder="••••••••" />
+      <div style="height:16px;"></div>
+      <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">Sign in</button>
+      <p class="muted" style="font-size:13px; margin-top:14px;">
+        No account? <a href="#" style="color:var(--cyan);" onclick="toggleRegister(); return false;">Create one</a>
+      </p>
+    </div>
+    <div id="form-register" style="display:none;">
+      <label>Full name</label>
+      <input id="reg-name" type="text" placeholder="Ada Lovelace" />
+      <div style="height:10px;"></div>
+      <label>Email</label>
+      <input id="reg-email" type="email" placeholder="you@example.com" />
+      <div style="height:10px;"></div>
+      <label>Password (min 8 characters)</label>
+      <input id="reg-password" type="password" placeholder="••••••••" />
+      <div style="height:16px;"></div>
+      <button class="btn btn-primary" style="width:100%;" onclick="doRegister()">Create account</button>
+      <p class="muted" style="font-size:13px; margin-top:14px;">
+        Already have an account? <a href="#" style="color:var(--cyan);" onclick="toggleRegister(); return false;">Sign in</a>
+      </p>
+    </div>
+    <p id="login-error" class="muted" style="color:var(--red); font-size:13px; margin-top:10px;"></p>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function toggleRegister() {
+  const a = document.getElementById('form-login');
+  const b = document.getElementById('form-register');
+  a.style.display = a.style.display === 'none' ? 'block' : 'none';
+  b.style.display = b.style.display === 'none' ? 'block' : 'none';
+}
+async function doLogin() {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  try {
+    const data = await API.post('/api/auth/login', { email, password });
+    API.setToken(data.access_token);
+    window.location.href = '/';
+  } catch (e) {
+    document.getElementById('login-error').textContent = e.message;
+  }
+}
+async function doRegister() {
+  const full_name = document.getElementById('reg-name').value;
+  const email = document.getElementById('reg-email').value;
+  const password = document.getElementById('reg-password').value;
+  try {
+    await API.post('/api/auth/register', { email, password, full_name });
+    const data = await API.post('/api/auth/login', { email, password });
+    API.setToken(data.access_token);
+    window.location.href = '/';
+  } catch (e) {
+    document.getElementById('login-error').textContent = e.message;
+  }
+}
+</script>
+{% endblock %}

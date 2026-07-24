@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Home — AI Assistant Platform{% endblock %}
+{% block page_title %}Home{% endblock %}
+{% block content %}
+<div class="grid grid-3" id="model-status-grid">
+  <div class="card">
+    <div class="muted" style="font-size:12px;">OPENAI</div>
+    <div id="status-openai" style="font-family: var(--font-mono); font-size: 20px; margin-top:6px;">—</div>
+  </div>
+  <div class="card">
+    <div class="muted" style="font-size:12px;">ANTHROPIC</div>
+    <div id="status-anthropic" style="font-family: var(--font-mono); font-size: 20px; margin-top:6px;">—</div>
+  </div>
+  <div class="card">
+    <div class="muted" style="font-size:12px;">GEMINI</div>
+    <div id="status-gemini" style="font-family: var(--font-mono); font-size: 20px; margin-top:6px;">—</div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:16px;">
+  <div class="section-title" style="font-size:16px;">Quick actions</div>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <a class="btn btn-primary" href="/chat">Start a chat</a>
+    <a class="btn" href="/documents">Upload a document</a>
+    <a class="btn" href="/agents">Run an agent</a>
+    <a class="btn" href="/code">Open code assistant</a>
+  </div>
+</div>
+
+<div class="card" style="margin-top:16px;">
+  <div class="section-title" style="font-size:16px;">About this platform</div>
+  <p class="muted" style="line-height:1.6;">
+    This is a full-stack AI assistant platform demonstrating multi-model chat (OpenAI, Anthropic, Gemini),
+    retrieval-augmented generation, long/short-term memory, tool &amp; function calling, a Model Context
+    Protocol (MCP) server and client, multi-step agents, and integrations with Calendar, Gmail, Telegram,
+    voice, and vision. See <code>README.md</code> in the repository root for full setup instructions.
+  </p>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(async () => {
+  try {
+    const data = await API.get('/api/models');
+    for (const p of data.providers) {
+      const el = document.getElementById(`status-${p.id}`);
+      el.innerHTML = p.configured
+        ? '<span class="badge ok">configured</span>'
+        : '<span class="badge off">not set</span>';
+    }
+  } catch (e) { console.error(e); }
+})();
+</script>
+{% endblock %}

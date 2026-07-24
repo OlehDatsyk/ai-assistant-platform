@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Memory — AI Assistant Platform{% endblock %}
+{% block page_title %}Long-term Memory{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Add a memory</div>
+  <textarea id="mem-content" rows="2" placeholder="e.g. I prefer concise answers with code examples"></textarea>
+  <div style="height:10px; display:flex; gap:10px;">
+    <select id="mem-category" style="max-width:200px;">
+      <option value="general">general</option>
+      <option value="preference">preference</option>
+      <option value="fact">fact</option>
+      <option value="project">project</option>
+    </select>
+    <select id="mem-importance" style="max-width:120px;">
+      <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+      <option value="4">4</option><option value="5">5</option>
+    </select>
+    <button class="btn btn-primary" onclick="addMemory()">Save</button>
+  </div>
+</div>
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Stored memories</div>
+  <div id="mem-list"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadMemory() {
+  const items = await API.get('/api/memory');
+  const box = document.getElementById('mem-list');
+  box.innerHTML = items.map(m => `
+    <div class="card" style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+      <div><span class="badge off">${m.category}</span> &nbsp; ${m.content} <span class="muted">(importance ${m.importance})</span></div>
+      <a href="#" style="color:var(--red); font-size:12px;" onclick="delMemory('${m.id}'); return false;">delete</a>
+    </div>`).join('') || '<div class="muted">No memories yet. The assistant also learns durable facts automatically during chat.</div>';
+}
+async function addMemory() {
+  const content = document.getElementById('mem-content').value.trim();
+  if (!content) return;
+  const category = document.getElementById('mem-category').value;
+  const importance = parseInt(document.getElementById('mem-importance').value);
+  await API.post('/api/memory', { content, category, importance });
+  document.getElementById('mem-content').value = '';
+  await loadMemory();
+}
+async function delMemory(id) { await API.del(`/api/memory/${id}`); await loadMemory(); }
+loadMemory();
+</script>
+{% endblock %}

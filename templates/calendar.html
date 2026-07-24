@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Calendar — AI Assistant Platform{% endblock %}
+{% block page_title %}Calendar{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-title" style="font-size:16px;">AI scheduling assistant</div>
+  <input id="ai-schedule-text" placeholder="e.g. Set up a 30 min sync with Priya next Tuesday at 2pm about the roadmap" />
+  <div style="height:10px;"></div>
+  <button class="btn" onclick="aiSchedule()">Parse into event</button>
+  <div id="ai-schedule-result" style="margin-top:12px;"></div>
+</div>
+
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Create event</div>
+  <div class="grid grid-2">
+    <div><label>Summary</label><input id="ev-summary" /></div>
+    <div><label>Description</label><input id="ev-description" /></div>
+    <div><label>Start (ISO)</label><input id="ev-start" placeholder="2026-08-01T14:00:00" /></div>
+    <div><label>End (ISO)</label><input id="ev-end" placeholder="2026-08-01T14:30:00" /></div>
+  </div>
+  <div style="height:10px;"></div>
+  <button class="btn btn-primary" onclick="createEvent()">Create in Google Calendar</button>
+  <p class="muted" style="font-size:12px; margin-top:8px;">Requires Google Calendar to be connected in Settings.</p>
+</div>
+
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Upcoming events</div>
+  <div id="event-list"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function aiSchedule() {
+  const text = document.getElementById('ai-schedule-text').value;
+  try {
+    const data = await API.get(`/api/calendar/ai-schedule?text=${encodeURIComponent(text)}`);
+    document.getElementById('ai-schedule-result').innerHTML = `<pre style="font-family:var(--font-mono); font-size:12.5px;">${JSON.stringify(data, null, 2)}</pre>`;
+  } catch (e) { alert(e.message); }
+}
+async function createEvent() {
+  try {
+    await API.post('/api/calendar/events', {
+      summary: document.getElementById('ev-summary').value,
+      description: document.getElementById('ev-description').value,
+      start_iso: document.getElementById('ev-start').value,
+      end_iso: document.getElementById('ev-end').value,
+    });
+    await loadEvents();
+  } catch (e) { alert(e.message); }
+}
+async function loadEvents() {
+  const box = document.getElementById('event-list');
+  try {
+    const events = await API.get('/api/calendar/events');
+    box.innerHTML = events.map(e => `<div class="card" style="margin-bottom:8px;">${e.summary || '(no title)'} <span class="muted">${(e.start||{}).dateTime || ''}</span></div>`).join('') || '<div class="muted">No upcoming events.</div>';
+  } catch (e) {
+    box.innerHTML = `<div class="muted">${e.message}</div>`;
+  }
+}
+loadEvents();
+</script>
+{% endblock %}

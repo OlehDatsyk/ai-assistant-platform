@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Agents — AI Assistant Platform{% endblock %}
+{% block page_title %}AI Agents{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Run an agent</div>
+  <label>Agent type</label>
+  <select id="agent-type">
+    <option value="research">Research agent (web search + synthesis)</option>
+    <option value="coding">Coding agent (plan + implement)</option>
+    <option value="email">Email agent (drafts a message)</option>
+  </select>
+  <div style="height:10px;"></div>
+  <label>Goal</label>
+  <textarea id="agent-goal" rows="3" placeholder="e.g. Research the current landscape of open-source vector databases and summarize the top 3 options"></textarea>
+  <div style="height:10px;"></div>
+  <button class="btn btn-primary" onclick="runAgent()">Run agent</button>
+</div>
+<div class="card" id="agent-output" style="display:none;">
+  <div class="section-title" style="font-size:16px;">Result</div>
+  <div id="agent-final" style="white-space:pre-wrap; font-size:14px; line-height:1.6;"></div>
+  <details style="margin-top:14px;">
+    <summary class="muted" style="cursor:pointer;">Show reasoning steps</summary>
+    <div id="agent-steps" style="margin-top:10px;"></div>
+  </details>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function runAgent() {
+  const agent = document.getElementById('agent-type').value;
+  const goal = document.getElementById('agent-goal').value.trim();
+  if (!goal) return;
+  const btn = event.target;
+  btn.textContent = 'Running...'; btn.disabled = true;
+  try {
+    const data = await API.post('/api/agents/run', { agent, goal, model_provider: 'openai' });
+    document.getElementById('agent-output').style.display = 'block';
+    document.getElementById('agent-final').textContent = data.final_answer;
+    document.getElementById('agent-steps').innerHTML = data.steps.map(s => `
+      <div class="card" style="margin-bottom:6px;">
+        <div class="muted" style="font-size:12px;">Step ${s.step + 1}</div>
+        <div style="font-size:13px; margin-top:4px;">${s.thought}</div>
+        ${s.tool_calls.length ? `<div class="muted" style="font-size:12px; margin-top:6px;">Tools used: ${s.tool_calls.map(t => t.tool).join(', ')}</div>` : ''}
+      </div>`).join('');
+  } catch (e) {
+    alert(e.message);
+  } finally {
+    btn.textContent = 'Run agent'; btn.disabled = false;
+  }
+}
+</script>
+{% endblock %}

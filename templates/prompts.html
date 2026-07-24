@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Prompt Library — AI Assistant Platform{% endblock %}
+{% block page_title %}Prompt Library{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-title" style="font-size:16px;">New prompt</div>
+  <input id="p-title" placeholder="Title, e.g. 'SQL query explainer'" />
+  <div style="height:10px;"></div>
+  <textarea id="p-content" rows="3" placeholder="Prompt text..."></textarea>
+  <div style="height:10px; display:flex; gap:10px;">
+    <select id="p-category" style="max-width:200px;">
+      <option value="general">general</option>
+      <option value="coding">coding</option>
+      <option value="writing">writing</option>
+      <option value="research">research</option>
+    </select>
+    <button class="btn btn-primary" onclick="addPrompt()">Save prompt</button>
+  </div>
+</div>
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Your prompts</div>
+  <div id="prompt-list"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadPrompts() {
+  const items = await API.get('/api/prompts');
+  const box = document.getElementById('prompt-list');
+  box.innerHTML = items.map(p => `
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex; justify-content:space-between;">
+        <strong>${p.is_favorite ? '★ ' : ''}${p.title}</strong>
+        <div>
+          <a href="#" style="font-size:12px; margin-right:10px;" onclick="favPrompt('${p.id}'); return false;">${p.is_favorite ? 'unfavorite' : 'favorite'}</a>
+          <a href="#" style="font-size:12px; color:var(--red);" onclick="delPrompt('${p.id}'); return false;">delete</a>
+        </div>
+      </div>
+      <div class="muted" style="font-size:13px; margin-top:6px;">${p.content}</div>
+      <span class="badge off" style="margin-top:6px; display:inline-block;">${p.category}</span>
+    </div>`).join('') || '<div class="muted">No saved prompts yet.</div>';
+}
+async function addPrompt() {
+  const title = document.getElementById('p-title').value.trim();
+  const content = document.getElementById('p-content').value.trim();
+  const category = document.getElementById('p-category').value;
+  if (!title || !content) return;
+  await API.post('/api/prompts', { title, content, category });
+  document.getElementById('p-title').value = '';
+  document.getElementById('p-content').value = '';
+  await loadPrompts();
+}
+async function favPrompt(id) { await API.patch(`/api/prompts/${id}/favorite`); await loadPrompts(); }
+async function delPrompt(id) { await API.del(`/api/prompts/${id}`); await loadPrompts(); }
+loadPrompts();
+</script>
+{% endblock %}

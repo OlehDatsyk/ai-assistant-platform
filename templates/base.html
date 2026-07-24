@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}AI Assistant Platform{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  {% block head %}{% endblock %}
+</head>
+<body>
+  {% if active_path == '/login' %}
+    {% block login_body %}{% endblock %}
+  {% else %}
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="dot"></span> AI Assistant Platform</div>
+
+      <div class="nav-group">
+        <div class="nav-label">Workspace</div>
+        <a class="nav-link {% if active_path == '/' %}active{% endif %}" href="/">Home</a>
+        <a class="nav-link {% if active_path == '/chat' %}active{% endif %}" href="/chat">Chat</a>
+        <a class="nav-link {% if active_path == '/agents' %}active{% endif %}" href="/agents">Agents</a>
+        <a class="nav-link {% if active_path == '/code' %}active{% endif %}" href="/code">Code Assistant</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Knowledge</div>
+        <a class="nav-link {% if active_path == '/documents' %}active{% endif %}" href="/documents">Documents</a>
+        <a class="nav-link {% if active_path == '/memory' %}active{% endif %}" href="/memory">Memory</a>
+        <a class="nav-link {% if active_path == '/prompts' %}active{% endif %}" href="/prompts">Prompt Library</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Integrations</div>
+        <a class="nav-link {% if active_path == '/calendar' %}active{% endif %}" href="/calendar">Calendar</a>
+        <a class="nav-link {% if active_path == '/emails' %}active{% endif %}" href="/emails">Emails</a>
+        <a class="nav-link {% if active_path == '/telegram' %}active{% endif %}" href="/telegram">Telegram</a>
+        <a class="nav-link {% if active_path == '/voice' %}active{% endif %}" href="/voice">Voice</a>
+        <a class="nav-link {% if active_path == '/vision' %}active{% endif %}" href="/vision">Vision</a>
+      </div>
+
+      <div class="nav-group" style="margin-top: auto;">
+        <a class="nav-link {% if active_path == '/settings' %}active{% endif %}" href="/settings">Settings</a>
+        <a class="nav-link" href="#" onclick="API.clearToken(); window.location.href='/login'; return false;">Sign out</a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <h1>{% block page_title %}{% endblock %}</h1>
+        {% block topbar_right %}{% endblock %}
+      </div>
+      <div class="content" style="{% block content_style %}{% endblock %}">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <script src="/static/js/api.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

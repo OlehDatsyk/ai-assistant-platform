@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Settings — AI Assistant Platform{% endblock %}
+{% block page_title %}Settings{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Preferences</div>
+  <label>Default model</label>
+  <select id="pref-model">
+    <option value="openai">OpenAI GPT</option>
+    <option value="anthropic">Anthropic Claude</option>
+    <option value="gemini">Google Gemini</option>
+  </select>
+  <div style="height:10px;"></div>
+  <label>Default system prompt</label>
+  <textarea id="pref-system" rows="3"></textarea>
+  <div style="height:10px;"></div>
+  <button class="btn btn-primary" onclick="savePrefs()">Save preferences</button>
+</div>
+
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Integrations</div>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <button class="btn" onclick="connectGmail()">Connect Gmail / Calendar</button>
+  </div>
+  <p class="muted" style="font-size:12px; margin-top:8px;">Uses Google OAuth. Requires GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET in your .env.</p>
+</div>
+
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Account</div>
+  <div id="account-info" class="muted"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadPrefs() {
+  const p = await API.get('/api/settings');
+  document.getElementById('pref-model').value = p.default_model;
+  document.getElementById('pref-system').value = p.default_system_prompt;
+}
+async function savePrefs() {
+  await API.put('/api/settings', {
+    default_model: document.getElementById('pref-model').value,
+    default_system_prompt: document.getElementById('pref-system').value,
+  });
+  alert('Saved.');
+}
+async function connectGmail() {
+  const data = await API.get('/api/gmail/oauth/start');
+  window.open(data.authorization_url, '_blank');
+}
+async function loadAccount() {
+  const me = await API.get('/api/auth/me');
+  document.getElementById('account-info').innerHTML = `${me.full_name || '(no name)'} · ${me.email}`;
+}
+loadPrefs();
+loadAccount();
+</script>
+{% endblock %}

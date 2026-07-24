@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Emails — AI Assistant Platform{% endblock %}
+{% block page_title %}Emails{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Gmail connection</div>
+  <button class="btn" onclick="connectGmail()">Connect Gmail</button>
+  <button class="btn" onclick="loadSummary()" style="margin-left:8px;">Summarize inbox</button>
+  <div id="inbox-summary" class="muted" style="margin-top:12px; white-space:pre-wrap;"></div>
+</div>
+
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Recent emails</div>
+  <div id="email-list"></div>
+</div>
+
+<div class="card">
+  <div class="section-title" style="font-size:16px;">Draft a reply</div>
+  <textarea id="orig-msg" rows="3" placeholder="Paste the original email..."></textarea>
+  <div style="height:8px;"></div>
+  <input id="reply-intent" placeholder="What should the reply say? e.g. 'Accept the meeting, propose Thursday instead'" />
+  <div style="height:10px;"></div>
+  <button class="btn btn-primary" onclick="draftReply()">Draft reply</button>
+  <div id="draft-output" style="margin-top:12px; white-space:pre-wrap; font-size:13.5px;"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function connectGmail() {
+  const data = await API.get('/api/gmail/oauth/start');
+  window.open(data.authorization_url, '_blank');
+}
+async function loadSummary() {
+  const box = document.getElementById('inbox-summary');
+  box.textContent = 'Summarizing...';
+  try {
+    const data = await API.get('/api/gmail/summary');
+    box.textContent = data.summary;
+  } catch (e) { box.textContent = e.message; }
+}
+async function loadEmails() {
+  const box = document.getElementById('email-list');
+  try {
+    const emails = await API.get('/api/gmail/emails');
+    box.innerHTML = emails.map(e => `
+      <div class="card" style="margin-bottom:8px;">
+        <strong>${e.subject}</strong>
+        <div class="muted" style="font-size:12px;">${e.from} · ${e.date}</div>
+        <div style="font-size:13px; margin-top:6px;">${e.snippet}</div>
+      </div>`).join('') || '<div class="muted">No emails found.</div>';
+  } catch (e) {
+    box.innerHTML = `<div class="muted">${e.message}</div>`;
+  }
+}
+async function draftReply() {
+  const original_message = document.getElementById('orig-msg').value;
+  const intent = document.getElementById('reply-intent').value;
+  const params = new URLSearchParams({ original_message, intent });
+  const data = await API.post('/api/gmail/draft?' + params.toString());
+  document.getElementById('draft-output').textContent = data.draft;
+}
+loadEmails();
+</script>
+{% endblock %}
