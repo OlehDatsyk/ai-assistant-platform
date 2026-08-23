@@ -52,3 +52,12 @@ dist/
 *.key
 credentials.json
 token.json
+
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.log
+.env
+*.db

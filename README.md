@@ -48,40 +48,40 @@ FastAPI routers (routes_*.py)  ──►  Service layer (chat_service, rag_servi
 
 ```
 ai-assistant-platform/
-├── main.py                  # FastAPI app entrypoint
-├── config.py                # Settings (env vars)
-├── database.py               # Async SQLAlchemy engine/session
-├── models.py                 # ORM models
-├── schemas.py                 # Pydantic request/response models
-├── auth.py                    # JWT + password hashing
-├── llm_providers.py           # Multi-model abstraction (OpenAI/Anthropic/Gemini)
-├── chat_service.py            # Chat orchestration (memory + RAG + tools)
-├── memory_service.py          # Short/long-term memory
-├── rag_service.py             # Document chunking/embedding/search
-├── tools.py                   # Tool/function-calling implementations
-├── code_assistant.py          # Code generate/explain/debug/refactor/review/test
-├── agents.py                  # Multi-step agent loop
-├── mcp_server.py               # MCP server (tools, resources, prompts)
-├── mcp_client.py               # MCP client demo
-├── google_auth_service.py      # Shared Google OAuth2 flow
-├── gmail_service.py            # Gmail integration
-├── calendar_service.py         # Google Calendar integration
-├── telegram_service.py         # Telegram bot
-├── voice_service.py            # Speech-to-text / text-to-speech
-├── vision_service.py           # OCR / captioning / receipt analysis
-├── file_search_service.py      # Metadata + semantic file search
-├── automation_service.py       # n8n / Zapier / Make webhooks
-├── rate_limiter.py             # In-memory rate limit middleware
-├── logging_config.py           # App-wide logging
-├── routes_*.py                 # FastAPI routers, one per feature area
-├── static/                     # CSS + JS (no build step)
-├── templates/                  # Jinja2 pages
-├── tests/                      # pytest suite
-├── docs/                       # Additional docs
+├── main.py # FastAPI app entrypoint
+├── config.py # Settings (env vars)
+├── database.py # Async SQLAlchemy engine/session
+├── models.py # ORM models
+├── schemas.py # Pydantic request/response models
+├── auth.py # JWT + password hashing
+├── llm_providers.py # Multi-model abstraction (OpenAI/Anthropic/Gemini)
+├── chat_service.py # Chat orchestration (memory + RAG + tools)
+├── memory_service.py # Short/long-term memory
+├── rag_service.py # Document chunking/embedding/search
+├── tools.py # Tool/function-calling implementations
+├── code_assistant.py # Code generate/explain/debug/refactor/review/test
+├── agents.py # Multi-step agent loop
+├── mcp_server.py # MCP server (tools, resources, prompts)
+├── mcp_client.py # MCP client demo
+├── google_auth_service.py # Shared Google OAuth2 flow
+├── gmail_service.py # Gmail integration
+├── calendar_service.py # Google Calendar integration
+├── telegram_service.py # Telegram bot
+├── voice_service.py # Speech-to-text / text-to-speech
+├── vision_service.py # OCR / captioning / receipt analysis
+├── file_search_service.py # Metadata + semantic file search
+├── automation_service.py # n8n / Zapier / Make webhooks
+├── rate_limiter.py # In-memory rate limit middleware
+├── logging_config.py # App-wide logging
+├── routes_*.py # FastAPI routers, one per feature area
+├── static/ # CSS + JS (no build step)
+├── templates/ # Jinja2 pages
+├── tests/ # pytest suite
+├── docs/ # Additional docs
 ├── requirements.txt
 ├── .env.example
-├── Start App.bat               # Windows one-click launcher
-└── Start App (Mac).command     # macOS one-click launcher
+├── Start App.bat # Windows one-click launcher
+└── Start App (Mac).command # macOS one-click launcher
 ```
 
 ## 4. Technology stack
