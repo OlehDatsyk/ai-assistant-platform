@@ -1,4 +1,4 @@
-"""routes_memory.py — long-term memory CRUD endpoints."""
+"""routes_memory.py - long-term memory CRUD endpoints."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException

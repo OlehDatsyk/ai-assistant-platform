@@ -127,6 +127,12 @@ async function sendMessage() {
       if (!line.startsWith('data: ')) continue;
       const chunk = line.slice(6);
       if (chunk === '[DONE]') continue;
+      if (chunk.startsWith('[ERROR]')) {
+        assistantDiv.textContent = '⚠️ ' + chunk.replace('[ERROR]', '').trim();
+        assistantDiv.style.color = '#ff6b6b';
+        document.getElementById('chat-messages').scrollTop = 1e9;
+        continue;
+      }
       assistantDiv.textContent += chunk;
       document.getElementById('chat-messages').scrollTop = 1e9;
     }

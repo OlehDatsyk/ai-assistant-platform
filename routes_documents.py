@@ -1,4 +1,4 @@
-"""routes_documents.py — document upload, library listing, and RAG query endpoints."""
+"""routes_documents.py - document upload, library listing, and RAG query endpoints."""
 from __future__ import annotations
 
 from pathlib import Path

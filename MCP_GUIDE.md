@@ -112,7 +112,7 @@ team - needs to consume the same capability.
 
 Before standardized protocols like MCP, integrating an LLM application with N external
 tools required roughly N custom integrations, and each of M different AI applications
-wanting to use those same N tools required M×N total integration efforts.
+wanting to use those same N tools required MxN total integration efforts.
 
 ```mermaid
 graph TD

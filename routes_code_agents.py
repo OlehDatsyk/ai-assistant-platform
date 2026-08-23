@@ -1,4 +1,4 @@
-"""routes_code_agents.py — code assistant, AI agents, and model-listing endpoints."""
+"""routes_code_agents.py - code assistant, AI agents, and model-listing endpoints."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends

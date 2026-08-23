@@ -1,4 +1,4 @@
-"""routes_pages.py — server-rendered dashboard pages (HTML shell; data loads via JS/API)."""
+"""routes_pages.py - server-rendered dashboard pages (HTML shell; data loads via JS/API)."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Request

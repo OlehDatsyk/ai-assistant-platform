@@ -1,4 +1,4 @@
-"""routes_chat.py — conversation CRUD and streaming chat endpoint."""
+"""routes_chat.py - conversation CRUD and streaming chat endpoint."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -84,16 +84,21 @@ async def stream_message(
     provider_name = payload.model_provider or conv.model_provider
 
     async def event_stream():
-        async for delta in chat_service.generate_reply_stream(
-            db=db,
-            conversation=conv,
-            user_text=payload.content,
-            provider_name=provider_name,
-            use_rag=payload.use_rag,
-            document_ids=payload.document_ids,
-            use_web_search=payload.use_web_search,
-        ):
-            yield f"data: {delta}\n\n"
+        try:
+            async for delta in chat_service.generate_reply_stream(
+                db=db,
+                conversation=conv,
+                user_text=payload.content,
+                provider_name=provider_name,
+                use_rag=payload.use_rag,
+                document_ids=payload.document_ids,
+                use_web_search=payload.use_web_search,
+            ):
+                yield f"data: {delta}\n\n"
+        except Exception as exc:  # surface the failure instead of hanging silently
+            import logging
+            logging.getLogger(__name__).exception("Chat stream failed")
+            yield f"data: [ERROR] {str(exc)}\n\n"
         yield "data: [DONE]\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")

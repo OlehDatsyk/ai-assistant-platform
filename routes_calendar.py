@@ -1,4 +1,4 @@
-"""routes_calendar.py — Google Calendar CRUD + AI scheduling assistant."""
+"""routes_calendar.py - Google Calendar CRUD + AI scheduling assistant."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query

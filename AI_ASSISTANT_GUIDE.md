@@ -91,7 +91,7 @@ itself. This handbook is primarily about that engineering.
 | Era | Example | Key characteristic |
 |---|---|---|
 | 1960s | ELIZA | Pattern-matching, no real understanding |
-| 1990s-2000s | Clippy, early IVR systems | Rule-based, brittle, narrow domains |
+| 1990s-8000s | Clippy, early IVR systems | Rule-based, brittle, narrow domains |
 | 2011-2016 | Siri, Google Now, Cortana, Alexa | Intent classification + slot filling, hand-written skills |
 | 2017-2019 | Transformer-based chatbots | Better language fluency, still mostly retrieval/rule-based for actions |
 | 2020-2022 | GPT-3, early ChatGPT prototypes | General-purpose generation, no reliable tool use yet |

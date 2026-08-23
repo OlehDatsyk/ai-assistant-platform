@@ -1,0 +1,54 @@
+# Environments
+.env
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data / DB
+data/*.db
+data/*.sqlite3
+data/vector_store/
+data/uploads/
+*.db-journal
+
+# Logs
+logs/
+*.log
+
+# Vector DBs / caches
+.cache/
+.chroma/
+*.faiss
+*.index
+
+# Uploaded files
+uploads/
+static/uploads/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Secrets
+*.pem
+*.key
+credentials.json
+token.json

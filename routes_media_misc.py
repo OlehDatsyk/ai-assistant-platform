@@ -1,4 +1,4 @@
-"""routes_media_misc.py — voice, vision, file search, and automation webhook endpoints."""
+"""routes_media_misc.py - voice, vision, file search, and automation webhook endpoints."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile

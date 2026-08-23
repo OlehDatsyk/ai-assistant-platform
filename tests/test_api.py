@@ -1,4 +1,4 @@
-"""test_api.py — integration tests hitting the FastAPI app through httpx's ASGI transport."""
+"""test_api.py - integration tests hitting the FastAPI app through httpx's ASGI transport."""
 from __future__ import annotations
 
 import pytest

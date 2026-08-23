@@ -1,4 +1,4 @@
-"""routes_settings.py — user preference endpoints (default model, theme, system prompt)."""
+"""routes_settings.py - user preference endpoints (default model, theme, system prompt)."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends

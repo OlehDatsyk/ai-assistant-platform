@@ -73,7 +73,7 @@ app.include_router(routes_gmail.router)
 app.include_router(routes_media_misc.router)
 app.include_router(routes_settings.router)
 
-# Page (HTML) router — must be included after API routers
+# Page (HTML) router - must be included after API routers
 app.include_router(routes_pages.router)
 
 

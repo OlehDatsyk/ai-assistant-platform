@@ -1,4 +1,4 @@
-"""routes_gmail.py — Gmail OAuth flow + read/summarize/draft/send/search endpoints."""
+"""routes_gmail.py - Gmail OAuth flow + read/summarize/draft/send/search endpoints."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query

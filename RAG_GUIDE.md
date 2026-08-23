@@ -1032,10 +1032,10 @@ tokens) each, chunked at 800 characters with 15% overlap:
 
 | Stage | Rough calculation | Order of magnitude |
 |---|---|---|
-| Chunks produced | 10,000 docs × ~15 chunks/doc | ~150,000 chunks |
-| One-time embedding cost | 150,000 chunks × ~200 tokens/chunk × embedding price/token | A few dollars, one-time, for a small embedding model |
+| Chunks produced | 10,000 docs x ~15 chunks/doc | ~150,000 chunks |
+| One-time embedding cost | 150,000 chunks x ~200 tokens/chunk x embedding price/token | A few dollars, one-time, for a small embedding model |
 | Per-query embedding cost | 1 query embedding call | Negligible - a query is a handful of tokens |
-| Per-query generation cost | 5 retrieved chunks × 200 tokens + query + system prompt ≈ 1,500-2,500 input tokens | The dominant recurring cost per query, not the retrieval step |
+| Per-query generation cost | 5 retrieved chunks x 200 tokens + query + system prompt ≈ 1,500-2,500 input tokens | The dominant recurring cost per query, not the retrieval step |
 
 The consistent finding across real deployments: **embedding cost is a one-time (or
 occasional re-ingestion) expense, while generation cost recurs on every single query** -

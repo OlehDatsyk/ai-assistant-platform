@@ -1,4 +1,4 @@
-"""test_rag_and_tools.py — unit tests for chunking, local embeddings, cosine search, and tools."""
+"""test_rag_and_tools.py - unit tests for chunking, local embeddings, cosine search, and tools."""
 from __future__ import annotations
 
 import sys

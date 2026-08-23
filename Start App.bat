@@ -3,9 +3,9 @@ setlocal enabledelayedexpansion
 title AI Assistant Platform
 cd /d "%~dp0"
 
-echo ==============================================
-echo   AI Assistant Platform - Startup (Windows)
-echo ==============================================
+echo =======================================================================
+echo   AI Assistant Platform - Startup (Windows) (Was made by Oleh Datsyk)
+echo =======================================================================
 echo.
 
 REM --- 1. Verify Python installation ---------------------------------------
@@ -68,7 +68,7 @@ if not exist ".env" (
     copy ".env.example" ".env" >nul
     echo.
     echo IMPORTANT: Open the new .env file and add at least one AI provider API key
-    echo            (OPENAI_API_KEY, ANTHROPIC_API_KEY, or GOOGLE_API_KEY) before chatting.
+    echo            ^(OPENAI_API_KEY, ANTHROPIC_API_KEY, or GOOGLE_API_KEY^) before chatting.
     echo.
 ) else (
     echo .env file found.
@@ -103,4 +103,4 @@ if errorlevel 1 (
     exit /b 1
 )
 
-pause
+endlocal

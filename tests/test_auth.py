@@ -1,4 +1,4 @@
-"""test_auth.py — unit tests for password hashing and JWT round-tripping."""
+"""test_auth.py - unit tests for password hashing and JWT round-tripping."""
 from __future__ import annotations
 
 import sys

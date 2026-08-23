@@ -1,5 +1,5 @@
 /**
- * api.js — thin fetch wrapper that attaches the JWT and centralizes error handling.
+ * api.js - thin fetch wrapper that attaches the JWT and centralizes error handling.
  * Every page script includes this before its own logic.
  */
 const API = {

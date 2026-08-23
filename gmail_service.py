@@ -55,7 +55,7 @@ async def summarize_inbox(db: AsyncSession, user_id: str, provider_name: str = "
     emails = await list_recent_emails(db, user_id, max_results=10)
     if not emails:
         return "No recent emails found."
-    listing = "\n".join(f"- From {e['from']}: {e['subject']} — {e['snippet']}" for e in emails)
+    listing = "\n".join(f"- From {e['from']}: {e['subject']} - {e['snippet']}" for e in emails)
     provider = get_provider(provider_name)
     result = await provider.complete(
         [

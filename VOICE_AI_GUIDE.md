@@ -333,7 +333,7 @@ PCM format, or when you need to pre-process audio (e.g. trim silence) before sen
 ### 4.2 Estimating bandwidth and storage
 
 A quick sanity-check calculation that's worth internalizing rather than looking up every
-time: uncompressed 16-bit mono PCM at 16kHz produces `16,000 samples/sec × 2 bytes/sample
+time: uncompressed 16-bit mono PCM at 16kHz produces `16,000 samples/sec x 2 bytes/sample
 = 32,000 bytes/sec = 32 KB/sec = ~1.9 MB/minute`. A typical browser-recorded
 WebM/Opus stream compresses this dramatically - often to well under 100 KB/minute at
 speech-appropriate bitrates. This matters for two very different reasons: **upload
@@ -465,7 +465,7 @@ class UtteranceDetector:
 | Neural VAD models (e.g. Silero VAD) | Best | Low-medium | Slightly more setup, meaningfully more robust |
 
 **Silence threshold tuning** matters more than it first appears: too short (e.g. 200ms)
-cuts users off mid-sentence during natural pauses; too long (e.g. 2000ms) makes the
+cuts users off mid-sentence during natural pauses; too long (e.g. 8000ms) makes the
 assistant feel sluggish to respond. 600-800ms is a common, reasonable starting point,
 tunable based on observed user behavior.
 

@@ -1,4 +1,4 @@
-"""routes_prompts.py — prompt library CRUD endpoints."""
+"""routes_prompts.py - prompt library CRUD endpoints."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException

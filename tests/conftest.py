@@ -1,4 +1,4 @@
-"""conftest.py — shared pytest fixtures: isolated test DB + FastAPI test client."""
+"""conftest.py - shared pytest fixtures: isolated test DB + FastAPI test client."""
 from __future__ import annotations
 
 import asyncio

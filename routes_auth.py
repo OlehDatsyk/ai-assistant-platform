@@ -1,4 +1,4 @@
-"""routes_auth.py — registration, login, and current-user endpoints."""
+"""routes_auth.py - registration, login, and current-user endpoints."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status

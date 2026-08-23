@@ -9,9 +9,9 @@
 set -u
 cd "$(dirname "$0")"
 
-echo "=============================================="
-echo "  AI Assistant Platform - Startup (macOS)"
-echo "=============================================="
+echo "====================================================================="
+echo "  AI Assistant Platform - Startup (macOS) (Was made by Oleh Datsyk)"
+echo "====================================================================="
 echo
 
 fail() {
